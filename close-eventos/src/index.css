@@ -1,7 +1,7 @@
-@import url('https://fonts.googleapis.com/css?family=Montserrat&display=swap');
-@import 'normalize';
+@import url('https://fonts.googleapis.com/css?family=Roboto:300,400,500');
+@import 'normalize.css';
 
-/* Defaults */
+/** Defaults */
 * {
   margin: 0;
   padding: 0;
@@ -11,17 +11,37 @@
 
 html,
 body {
-  height: 100%;
-  width: 100%;
+  height: 100vh;
+  width: 100vw;
   color: black;
   background-color: #ebebeb;
   overflow: hidden;
-  font-size: 14px; /* 1em ou 1rem === 14px */
-  font-family: 'Montserrat', sans-serif;
+  font-size: 14px; /** 1em ou 1rem === 14px */
+  font-family: 'Roboto', sans-serif;
+  font-weight: 300;
+}
+/** Defaults */
+
+/* Custom Scrollbar */
+/* width */
+::-webkit-scrollbar {
+  width: 4px;
 }
 
-table {
-  border-collapse: collapse;
-  border-spacing: 0;
+/* Track */
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px rgba(9, 9, 9, 0);
+  border-radius: 0px;
 }
-/* Defaults */
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 0px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.6);
+}
+/* Custom Scrollbar */
