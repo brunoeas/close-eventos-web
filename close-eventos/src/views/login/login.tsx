@@ -138,7 +138,9 @@ function Login(props: LoginPropTypes): JSX.Element {
   function handleSubmitFormik(
     values: LoginFormikValuesType,
     formikHelpers: FormikHelpers<LoginFormikValuesType>
-  ) {}
+  ) {
+    history.push('/');
+  }
 }
 
 export default Login;
