@@ -1,0 +1,7 @@
+.edit-button {
+  display: none !important;
+}
+
+.card-evento:hover .edit-button {
+  display: inline-flex !important;
+}

@@ -3,8 +3,10 @@ import ReactDOM from 'react-dom';
 import Fab, { FabProps } from '@material-ui/core/Fab';
 import { useStyles } from './fab.styles';
 import { createMuiTheme, MuiThemeProvider, useTheme } from '@material-ui/core';
+import Tooltip from '@material-ui/core/Tooltip';
 
 export type ButtonFABPropType = FabProps & {
+  title?: any;
   iconSrc?: string;
   children?: any;
   ImgIconProps?: ImgHTMLAttributes<HTMLImageElement>;
@@ -17,7 +19,7 @@ export type ButtonFABPropType = FabProps & {
  * @returns {JSX.Element}
  */
 function ButtonFAB(props: ButtonFABPropType): JSX.Element {
-  const { children, iconSrc, ImgIconProps, color = 'primary', ...others } = props;
+  const { children, title = '', iconSrc, ImgIconProps, color = 'primary', ...others } = props;
   const classes = useStyles(props);
   const theme = useTheme();
 
@@ -34,9 +36,11 @@ function ButtonFAB(props: ButtonFABPropType): JSX.Element {
         },
       })}
     >
-      <Fab color={color} {...others} className={`${classes.fab} ${others.className ?? ''}`}>
-        {!iconSrc ? children : <img src={iconSrc} alt=' ' {...ImgIconProps} />}
-      </Fab>
+      <Tooltip title={title}>
+        <Fab color={color} {...others} className={`${classes.fab} ${others.className ?? ''}`}>
+          {!iconSrc ? children : <img src={iconSrc} alt=' ' {...ImgIconProps} />}
+        </Fab>
+      </Tooltip>
     </MuiThemeProvider>
   );
 

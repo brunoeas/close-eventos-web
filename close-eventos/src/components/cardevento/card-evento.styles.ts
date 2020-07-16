@@ -1,8 +1,9 @@
 import { makeStyles } from '@material-ui/core';
 
-export const cardEventoWidth = 250;
-export const cardEventoHeight = 330;
+export const cardEventoWidth = 280;
+export const cardEventoHeight = 320;
 export const cardEventoContentHeight = 50;
+export const titleCardEventoWidth = cardEventoWidth - 121;
 
 /**
  * Estilos do Card de Evento
@@ -14,8 +15,19 @@ const useStyles = makeStyles({
     marginRight: 15,
     marginBottom: 15,
   },
+  titleCard: {
+    fontWeight: 'bold',
+    fontSize: '0.95rem',
+    width: titleCardEventoWidth,
+  },
+  subtitleCard: {
+    width: titleCardEventoWidth,
+  },
   media: {
     height: 115,
+  },
+  cardActions: {
+    paddingTop: 0,
   },
   textStatus: {
     fontSize: '0.79rem',
