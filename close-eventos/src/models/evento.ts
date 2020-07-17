@@ -29,7 +29,7 @@ interface Evento {
   /**
    * Data de inicio
    */
-  dtInicio: string;
+  dhInicio: string;
 
   /**
    * Duração em horas
@@ -62,9 +62,19 @@ interface Evento {
   nrEndereco: number;
 
   /**
-   * CEP
+   * Complemento do endereço
    */
-  nrCep: string;
+  dsComplemento?: string;
+
+  /**
+   * Município
+   */
+  idMunicipio: number;
+
+  /**
+   * UF
+   */
+  idUF: number;
 }
 
 export default Evento;

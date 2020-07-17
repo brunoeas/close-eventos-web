@@ -17,9 +17,6 @@ const useStyles = makeStyles({
     minWidth: 35,
     padding: 5,
   },
-  buttonDisabled: {
-    backgroundColor: 'rgb(149, 152, 154) !important',
-  },
   buttonEdit: {
     backgroundColor: 'rgb(66, 173, 232)',
   },
