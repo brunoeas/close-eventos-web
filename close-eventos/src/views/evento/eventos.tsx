@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
 import Card from '../../components/card/card';
 import { useStyles } from './evento.styles';
-import Grid from '@material-ui/core/Grid';
-import Button from '@material-ui/core/Button';
-import DeleteIcon from '@material-ui/icons/Delete';
-import EditIcon from '@material-ui/icons/Create';
 import AddIcon from '@material-ui/icons/Add';
-import clsx from 'clsx';
 import ButtonFAB from '../../components/buttonfab/button-fab';
 import Evento from '../../models/evento';
 import CardEvento from '../../components/cardevento/card-evento';
 import Usuario from '../../models/usuario';
 import TipoSexoEnum from '../../enumerations/tipo-sexo-enum';
 import DialogEvento from '../../components/dialogevento/dialog-evento';
+import { useHistory } from 'react-router-dom';
+import EventoAPI from '../../resources/api/evento';
+import { useComponentDidMount } from '../../utils/hooks';
+import Loading from '../../components/loading/loading';
+import Swal from '../../components/swal/swal';
 
 const administrador: Usuario = {
   nmUsuario: 'Murilo Xelemper',
@@ -428,41 +428,38 @@ export type EventosPropTypes = {};
  * @returns {JSX.Element}
  */
 function Eventos(props: EventosPropTypes): JSX.Element {
+  const eventoAPI = new EventoAPI();
+
   const classes = useStyles(props);
+  const history = useHistory();
 
   const [eventoList, setEventoList] = useState<Evento[]>(fakeData);
   const [selected, setSelected] = useState<Evento | null>(null);
   const [dialogIsOpen, setDialogOpen] = useState<boolean>(false);
+  const [isLoading, setLoading] = useState<boolean>(true);
+
+  useComponentDidMount(() => {
+    eventoAPI
+      .findAll()
+      .then((res) => setEventoList(res.data))
+      .catch((err) => {
+        Swal({
+          showConfirmButton: false,
+          showCancelButton: true,
+          cancelButtonText: 'Ok',
+          title: 'Ocorreu um erro',
+          text: 'Não foi possível carregar os eventos, tente novamente',
+          icon: 'error',
+        });
+      })
+      .finally(() => setLoading(false));
+  });
 
   return (
     <>
-      <Card
-        className={classes.card}
-        contentContainerDivProps={{ style: { padding: 0 } }}
-        head={
-          <Grid container>
-            <Grid item xs={3} style={{ display: 'flex', alignItems: 'center' }}>
-              Eventos
-            </Grid>
+      <Loading show={isLoading} />
 
-            <Grid item xs />
-
-            <Grid item xs={2} style={{ display: 'flex', justifyContent: 'flex-end' }}>
-              {selected && (
-                <>
-                  <Button variant='contained' className={clsx(classes.button, classes.buttonEdit)}>
-                    <EditIcon color='secondary' />
-                  </Button>
-
-                  <Button variant='contained' className={clsx(classes.button, classes.buttonDelete)}>
-                    <DeleteIcon color='secondary' />
-                  </Button>
-                </>
-              )}
-            </Grid>
-          </Grid>
-        }
-      >
+      <Card head='Eventos' className={classes.card} contentContainerDivProps={{ style: { padding: 0 } }}>
         <div className={classes.containerScroll}>
           <div className={classes.containerCards}>
             {eventoList.map((item, i) => (
@@ -479,7 +476,7 @@ function Eventos(props: EventosPropTypes): JSX.Element {
         </div>
       </Card>
 
-      <ButtonFAB title='Novo evento'>
+      <ButtonFAB title='Novo evento' onClick={() => history.push('/evento/novo')}>
         <AddIcon />
       </ButtonFAB>
 

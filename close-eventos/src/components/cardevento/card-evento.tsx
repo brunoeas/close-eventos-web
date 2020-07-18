@@ -12,8 +12,9 @@ import IconButton from '@material-ui/core/IconButton';
 import EyeIcon from '@material-ui/icons/Visibility';
 import Grid from '@material-ui/core/Grid';
 import Tooltip from '@material-ui/core/Tooltip';
+import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Create';
-import './card-evento.css';
+import { useHistory } from 'react-router-dom';
 
 const defaultMedia = require('../../assets/images/default-event-media.jpg');
 
@@ -31,62 +32,63 @@ export type CardEventoPropTypes = {
 function CardEvento(props: CardEventoPropTypes): JSX.Element {
   const { evento, onClickView } = props;
   const classes = useStyles(props);
+  const history = useHistory();
 
   return (
-    <>
-      <Card className={`card-evento ${classes.root}`}>
-        <CardHeader
-          avatar={
-            evento.administrador.dsLinkFoto ? (
-              <Avatar src={evento.administrador.dsLinkFoto} alt={evento.administrador.nmUsuario} />
-            ) : (
-              <Avatar>{evento.administrador.nmUsuario.substr(0, 1).toUpperCase()}</Avatar>
-            )
-          }
-          title={evento.dsTitulo}
-          subheader={evento.administrador.nmUsuario}
-          titleTypographyProps={{ className: classes.titleCard, noWrap: true }}
-          subheaderTypographyProps={{ className: classes.subtitleCard, noWrap: true }}
-          action={
-            <IconButton className='edit-button'>
-              <EditIcon />
-            </IconButton>
-          }
-        />
+    <Card className={classes.root}>
+      <CardHeader
+        avatar={
+          evento.administrador.dsLinkFoto ? (
+            <Avatar src={evento.administrador.dsLinkFoto} alt={evento.administrador.nmUsuario} />
+          ) : (
+            <Avatar>{evento.administrador.nmUsuario.substr(0, 1).toUpperCase()}</Avatar>
+          )
+        }
+        title={evento.dsTitulo}
+        subheader={evento.administrador.nmUsuario}
+        titleTypographyProps={{ className: classes.titleCard, noWrap: true }}
+        subheaderTypographyProps={{ className: classes.subtitleCard, noWrap: true }}
+      />
 
-        <CardMedia className={classes.media} image={evento.dsLinkFoto ?? defaultMedia} />
+      <CardMedia className={classes.media} image={evento.dsLinkFoto ?? defaultMedia} />
 
-        <CardContent className={classes.cardContent}>
-          <Typography
-            variant='body2'
-            color='textSecondary'
-            component='p'
-            style={{ height: 50, overflowY: 'hidden', textOverflow: 'ellipsis' }}
-          >
-            {evento.dsEvento}
-          </Typography>
-        </CardContent>
+      <CardContent className={classes.cardContent}>
+        <Typography
+          variant='body2'
+          color='textSecondary'
+          component='p'
+          style={{ height: 50, overflowY: 'hidden', textOverflow: 'ellipsis' }}
+        >
+          {evento.dsEvento}
+        </Typography>
+      </CardContent>
 
-        <CardActions disableSpacing className={classes.cardActions}>
-          <Grid container>
-            <Grid item xs={10} className={classes.textStatus}>
-              <div>
-                Status de presença:
-                <div style={{ fontWeight: 'bold', display: 'inline' }}> Não confirmado</div>
-              </div>
-            </Grid>
-
-            <Grid item xs={2} className={classes.containerViewEventButton}>
-              <Tooltip title='Visualizar detalhes do evento'>
-                <IconButton onClick={onClickView}>
-                  <EyeIcon />
-                </IconButton>
-              </Tooltip>
-            </Grid>
+      <CardActions disableSpacing className={classes.cardActions}>
+        <Grid container>
+          <Grid item xs={10} className={classes.textStatus}>
+            <Tooltip title='Visualizar detalhes do evento'>
+              <IconButton onClick={onClickView}>
+                <EyeIcon />
+              </IconButton>
+            </Tooltip>
           </Grid>
-        </CardActions>
-      </Card>
-    </>
+
+          <Grid item xs={2} className={classes.containerViewEventButton}>
+            <Tooltip title='Editar evento'>
+              <IconButton onClick={() => history.push(`/evento/edit/${evento.idEvento}`)}>
+                <EditIcon />
+              </IconButton>
+            </Tooltip>
+
+            <Tooltip title='Excluir evento'>
+              <IconButton>
+                <DeleteIcon />
+              </IconButton>
+            </Tooltip>
+          </Grid>
+        </Grid>
+      </CardActions>
+    </Card>
   );
 }
 

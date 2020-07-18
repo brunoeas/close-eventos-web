@@ -60,4 +60,27 @@ function getLabelItem<T = object>(
   }`;
 }
 
-export { getObjectPropWithString, getValueItem, getLabelItem };
+/**
+ * Converte um File para Base64
+ *
+ * @param {Blob} file - File que vai ser convertido
+ * @returns {Promise<string>} Promise com o resultado da conversão
+ */
+async function fileToBase64(file: Blob): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      if (!reader.result || typeof reader.result !== 'string') {
+        reject();
+        return;
+      }
+
+      resolve(reader.result);
+    };
+
+    reader.readAsDataURL(file);
+  });
+}
+
+export { getObjectPropWithString, getValueItem, getLabelItem, fileToBase64 };

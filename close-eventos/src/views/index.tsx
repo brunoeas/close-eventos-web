@@ -1,8 +1,9 @@
 import React from 'react';
 import { useStyles } from './index.styles';
 import MainToolbar from '../components/maintoolbar/main-toolbar';
-import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
+import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import Eventos from './evento/eventos';
+import EditEvento from './evento/edit-evento';
 
 export type AppMainLayoutPropTypes = {};
 
@@ -23,7 +24,8 @@ function AppMainLayout(props: AppMainLayoutPropTypes): JSX.Element {
         <BrowserRouter>
           <Switch>
             <Route exact path='/' component={Eventos} />
-            <Route path='*' render={() => <Redirect to='/' />} />
+            <Route path='/evento/edit/{id}' component={EditEvento} />
+            <Route path='/evento/novo' component={EditEvento} />
           </Switch>
         </BrowserRouter>
       </div>

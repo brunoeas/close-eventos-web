@@ -19,7 +19,7 @@ function TextField(props: TextFieldProps): JSX.Element {
       type={type === 'number' || !type ? 'text' : type}
       onChange={(e) => {
         if (type === 'number' && !isNaN(+e.target.value)) {
-          e.target.value = e.target.value.split('e').join('').split('E').join('');
+          e.target.value = (e.target.value ?? '').replace(/(e|E| +)/g, '');
           onChange && onChange(e);
         } else if (type !== 'number') {
           onChange && onChange(e);
