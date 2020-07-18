@@ -22,17 +22,17 @@ class IBGELocalidadesApi extends RootApi {
   /**
    * Busca os municípios filtrando pelo ID do UF
    *
-   * @param {string} idUF - ID do UF
-   * @returns Promise com a resposta contendo a lista de municipios
+   * @param {number} idUF - ID do UF
+   * @returns {Promise<AxiosResponse<Municipio[]>>} Promise com a resposta contendo a lista de municipios
    */
-  public async findMunicipiosByUF(idUF: string): Promise<AxiosResponse<Municipio[]>> {
+  public async findMunicipiosByUF(idUF: number): Promise<AxiosResponse<Municipio[]>> {
     return this.api.get(`/estados/${idUF}/municipios`);
   }
 
   /**
    * Busca todos os UFs
    *
-   * @returns Promise com a resposta contendo a lista de todos os UFs
+   * @returns {Promise<AxiosResponse<Estado[]>>} Promise com a resposta contendo a lista de todos os UFs
    */
   public async findAllUFs(): Promise<AxiosResponse<Estado[]>> {
     return this.api.get(`/estados`);
@@ -41,7 +41,7 @@ class IBGELocalidadesApi extends RootApi {
   /**
    * Obtém o conjunto de municípios do Brasil a partir dos respectivos identificadores
    *
-   * @param {(number | string)} id - ID do município
+   * @param {number} id - ID do município
    * @returns {Promise<AxiosResponse<Municipio>>} Promise com a resposta contendo o município
    */
   public async findMunicipioById(id: number): Promise<AxiosResponse<Municipio>> {
@@ -51,7 +51,7 @@ class IBGELocalidadesApi extends RootApi {
   /**
    * Obtém o conjunto de Unidades da Federação do Brasil a partir dos respectivos identificadores
    *
-   * @param {(number | string)} id - ID do estado
+   * @param {number} id - ID do estado
    * @returns {Promise<AxiosResponse<Estado>>} Promise com a resposta contendo o estado
    */
   public async findEstadoById(id: number): Promise<AxiosResponse<Estado>> {

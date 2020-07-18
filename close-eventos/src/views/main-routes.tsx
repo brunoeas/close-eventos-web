@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
+import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import AppMainLayout from './';
 import Login from './login/login';
 import CadastroUsuario from './usuario/cadastro-usuario';
@@ -13,8 +13,7 @@ function createRoutes(): JSX.Element {
       <Switch>
         <Route path='/login' component={Login} />
         <Route path='/cadastro-usuario' component={CadastroUsuario} />
-        <Route exact path='/' component={AppMainLayout} />
-        <Route path='*' render={() => <Redirect to='/' />} />
+        <Route path='/' component={AppMainLayout} />
       </Switch>
     </BrowserRouter>
   );
