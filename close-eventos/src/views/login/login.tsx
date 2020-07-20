@@ -59,8 +59,14 @@ function Login(props: LoginPropTypes): JSX.Element {
       dsSenha: '',
     },
     validationSchema: Yup.object().shape({
-      dsEmail: Yup.string().email('E-mail inválido').required('Campo obrigatório'),
-      dsSenha: Yup.string().required('Campo obrigatório'),
+      dsEmail: Yup.string()
+        .max(150, 'O e-mail deve ter no máximo 150 caracteres')
+        .email('E-mail inválido')
+        .required('Campo obrigatório'),
+      dsSenha: Yup.string()
+        .min(5, 'A senha deve ter no mínimo 5 caracteres')
+        .max(50, 'A senha deve ter no máximo 50 caracteres')
+        .required('Campo obrigatório'),
     }),
     onSubmit: handleSubmitFormik,
   });

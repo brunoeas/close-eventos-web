@@ -472,7 +472,14 @@ function EditEvento(props: EditEventoPropTypes): JSX.Element {
       dsBase64Foto: dsBase64Foto || undefined,
       nrDuracao,
       nrEndereco,
-      administrador: { nmUsuario: '', nrTelefone: '', dtNascimento: '', tpSexo: 1, dsEmail: '' },
+      administrador: {
+        nmUsuario: '',
+        nrTelefone: '',
+        dtNascimento: '',
+        tpSexo: 1,
+        dsEmail: '',
+        dsSenha: '',
+      },
     };
 
     let promiseContext;
@@ -525,11 +532,10 @@ function EditEvento(props: EditEventoPropTypes): JSX.Element {
   }
 
   /**
-   * Manipula o evento de seleção de um a
+   * Manipula o evento de seleção de um arquivo
    *
    * @param {(DragEvent<HTMLDivElement> | ChangeEvent<HTMLInputElement>)} e
-   * @param {(FileList | null)} fileList
-   * @returns
+   * @param {(FileList | null)} fileList - Arquivos selecionados
    */
   async function handleSelectFile(
     e: DragEvent<HTMLDivElement> | ChangeEvent<HTMLInputElement>,
@@ -554,7 +560,17 @@ function EditEvento(props: EditEventoPropTypes): JSX.Element {
 
     fileToBase64(file)
       .then((base64) => setFieldValue('dsBase64Foto', base64))
-      .catch((err) => setFieldValue('dsBase64Foto', null))
+      .catch((err) => {
+        Swal({
+          showConfirmButton: false,
+          showCancelButton: true,
+          cancelButtonText: 'Ok',
+          title: 'Ocorreu um erro',
+          text: 'Não foi possivel fazer o Upload da imagem, tente novamente',
+          icon: 'error',
+        });
+        setFieldValue('dsBase64Foto', null);
+      })
       .finally(() => setFieldValue('dsLinkFoto', null));
   }
 }

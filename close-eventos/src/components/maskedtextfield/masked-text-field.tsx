@@ -32,7 +32,6 @@ export type MaskedTextFieldPropType = NumberFormatProps & {
 /**
  * Componente TextField com máscara customizado
  *
- * @author Bruno Eduardo <bruno.soares@kepha.com.br>
  * @see https://github.com/s-yadav/react-number-format#readme
  * @param {MaskedTextFieldPropType} props
  */

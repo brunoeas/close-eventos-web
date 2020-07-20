@@ -20,6 +20,7 @@ const administrador: Usuario = {
   nrTelefone: '(46) 9 9923-6314',
   tpSexo: TipoSexoEnum.FEMININO,
   dtNascimento: '2000-03-22',
+  dsSenha: '',
 };
 
 const fakeData: Evento[] = [
@@ -41,6 +42,7 @@ const fakeData: Evento[] = [
       nrTelefone: '(46) 9 9923-6314',
       tpSexo: TipoSexoEnum.FEMININO,
       dtNascimento: '2000-03-22',
+      dsSenha: '',
       dsLinkFoto:
         'https://scontent.figu2-1.fna.fbcdn.net/v/t1.0-9/72663501_961949844167461_3866688438736519168_n.jpg?_nc_cat=108&_nc_sid=110474&_nc_eui2=AeF5X7Y-heTmvaLdl8uXTleRaroTF-K9zZlquhMX4r3NmWGVYkPrTDDmvR2sHacTz30h2hxsxmeCsB7tnFEB_gsx&_nc_ohc=vt55BYJZ7D8AX9mVVO9&_nc_ht=scontent.figu2-1.fna&oh=27e6ac83b908a3b8dadac3e90a66ee4d&oe=5F361D72',
     },

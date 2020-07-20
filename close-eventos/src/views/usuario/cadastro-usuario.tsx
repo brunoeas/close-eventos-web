@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, DragEvent, ChangeEvent } from 'react';
 import BaseLogin from '../../components/baselogin/base-login';
 import { FormikHelpers, useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -16,6 +16,11 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import PasswordVisibleIcon from '@material-ui/icons/Visibility';
 import PasswordNotVisibleIcon from '@material-ui/icons/VisibilityOff';
 import IconButton from '@material-ui/core/IconButton';
+import Avatar from '@material-ui/core/Avatar';
+import Tooltip from '@material-ui/core/Tooltip';
+import { fileToBase64 } from '../../utils';
+import Loading from '../../components/loading/loading';
+import Swal from '../../components/swal/swal';
 
 /**
  * Tipo dos valores do formik
@@ -28,6 +33,7 @@ export type CadastroUsuarioFormikValuesType = {
   dsEmail: string;
   dsSenha: string;
   dsConfirmarSenha: string;
+  dsBase64Foto: string | null;
 };
 
 export type CadastroUsuarioPropTypes = {};
@@ -41,6 +47,7 @@ export type CadastroUsuarioPropTypes = {};
 function CadastroUsuario(props: CadastroUsuarioPropTypes): JSX.Element {
   const classes = useStyles(props);
   const history = useHistory();
+  const inputFileRef = useRef<HTMLInputElement | null>(null);
 
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
@@ -58,26 +65,73 @@ function CadastroUsuario(props: CadastroUsuarioPropTypes): JSX.Element {
       dsEmail: '',
       dsSenha: '',
       dsConfirmarSenha: '',
+      dsBase64Foto: null,
     },
     validationSchema: Yup.lazy<any>((values: CadastroUsuarioFormikValuesType) =>
       Yup.object().shape({
-        dsEmail: Yup.string().email('E-mail inválido').required('Campo obrigatório'),
-        dsSenha: Yup.string().required('Campo obrigatório'),
+        dsEmail: Yup.string()
+          .max(150, 'O e-mail deve ter no máximo 150 caracteres')
+          .email('E-mail inválido')
+          .required('Campo obrigatório'),
+        dsSenha: Yup.string()
+          .min(5, 'A senha deve ter no mínimo 5 caracteres')
+          .max(50, 'A senha deve ter no máximo 50 caracteres')
+          .required('Campo obrigatório'),
+        dsConfirmarSenha: Yup.string()
+          .min(5, 'A senha deve ter no mínimo 5 caracteres')
+          .max(50, 'A senha deve ter no máximo 50 caracteres')
+          .equals([values.dsSenha], 'As senhas não coincidem')
+          .required('Campo obrigatório'),
         nmUsuario: Yup.string().required('Campo obrigatório'),
         nrTelefone: Yup.string().required('Campo obrigatório'),
         dtNascimento: Yup.date().required('Campo obrigatório'),
         tpSexo: Yup.number().required('Campo obrigatório'),
-        dsConfirmarSenha: Yup.string()
-          .equals([values.dsSenha], 'As senhas não coincidem')
-          .required('Campo obrigatório'),
       })
     ),
     onSubmit: handleSubmitFormik,
   });
 
+  const styleAvatar: any = {
+    height: 100,
+    width: 100,
+    fontWeight: 'bold',
+    fontSize: '2rem',
+    cursor: 'pointer',
+  };
+
   return (
     <BaseLogin size={8} head='Novo usuário'>
-      <Grid container style={{ height: 70 }}>
+      <input
+        accept='image/*'
+        className={classes.inputFile}
+        multiple={false}
+        type='file'
+        ref={(ref) => (inputFileRef.current = ref)}
+        onChange={(e) => handleSelectFile(e, e.target.files)}
+      />
+
+      <div
+        style={{
+          width: '100%',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <div style={{ position: 'absolute', top: -80 }}>
+          <Tooltip title='Clique para escolher uma imagem' onClick={() => inputFileRef.current?.click()}>
+            {values.dsBase64Foto ? (
+              <Avatar style={styleAvatar} alt={values.nmUsuario} src={values.dsBase64Foto} />
+            ) : (
+              <Avatar style={styleAvatar}>
+                {values.nmUsuario ? values.nmUsuario.substr(0, 1).toUpperCase() : 'U'}
+              </Avatar>
+            )}
+          </Tooltip>
+        </div>
+      </div>
+
+      <Grid container style={{ height: 70, marginTop: 30 }}>
         <Grid item xs={6} style={{ paddingRight: 15 }}>
           <TextField
             label='Nome'
@@ -199,11 +253,20 @@ function CadastroUsuario(props: CadastroUsuarioPropTypes): JSX.Element {
       </Grid>
 
       <Grid container>
-        <Grid item xs />
+        <Grid item xs className={classes.containerButtons}>
+          {values.dsBase64Foto && (
+            <Button
+              onClick={() => setFieldValue('dsBase64Foto', null)}
+              variant='contained'
+              className={classes.buttonRemoveImg}
+              color='inherit'
+            >
+              Remover imagem
+            </Button>
+          )}
 
-        <Grid item xs={4} className={classes.containerButtons}>
           <Button
-            onClick={(e: any) => history.push('/login')}
+            onClick={() => history.push('/login')}
             variant='contained'
             className={classes.buttonCancelar}
             color='inherit'
@@ -229,6 +292,48 @@ function CadastroUsuario(props: CadastroUsuarioPropTypes): JSX.Element {
     values: CadastroUsuarioFormikValuesType,
     formikHelpers: FormikHelpers<CadastroUsuarioFormikValuesType>
   ) {}
+
+  /**
+   * Manipula o evento de seleção de um arquivo
+   *
+   * @param {(DragEvent<HTMLDivElement> | ChangeEvent<HTMLInputElement>)} e
+   * @param {(FileList | null)} fileList - Arquivos selecionados
+   */
+  async function handleSelectFile(
+    e: DragEvent<HTMLDivElement> | ChangeEvent<HTMLInputElement>,
+    fileList: FileList | null
+  ) {
+    if (!fileList || fileList.length === 0) return;
+    e.preventDefault();
+
+    const file = Array.from(fileList)[0];
+
+    if (file.size > 10000000) {
+      Swal({
+        showConfirmButton: false,
+        showCancelButton: true,
+        cancelButtonText: 'Ok',
+        title: 'Imagem inválida',
+        text: 'A imagem deve ter no máximo 10MB',
+        icon: 'error',
+      });
+      return;
+    }
+
+    fileToBase64(file)
+      .then((base64) => setFieldValue('dsBase64Foto', base64))
+      .catch((err) => {
+        Swal({
+          showConfirmButton: false,
+          showCancelButton: true,
+          cancelButtonText: 'Ok',
+          title: 'Ocorreu um erro',
+          text: 'Não foi possivel fazer o Upload da imagem, tente novamente',
+          icon: 'error',
+        });
+        setFieldValue('dsBase64Foto', null);
+      });
+  }
 }
 
 export default CadastroUsuario;

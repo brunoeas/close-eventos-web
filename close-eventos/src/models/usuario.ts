@@ -37,6 +37,11 @@ interface Usuario {
   dsEmail: string;
 
   /**
+   * Senha
+   */
+  dsSenha: string;
+
+  /**
    * Link da foto
    */
   dsLinkFoto?: string;
