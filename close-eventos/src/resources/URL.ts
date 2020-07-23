@@ -9,7 +9,7 @@ abstract class URL {
    *
    * @static
    */
-  public static readonly MAIN_API = 'http://localhost:3000';
+  public static readonly MAIN_API = 'http://localhost:2210';
 
   /**
    * URL da API do IBGE (Instituto Brasileiro de Geografia e Estatistica)

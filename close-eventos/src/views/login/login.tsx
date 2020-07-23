@@ -12,6 +12,11 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import PasswordVisibleIcon from '@material-ui/icons/Visibility';
 import PasswordNotVisibleIcon from '@material-ui/icons/VisibilityOff';
 import IconButton from '@material-ui/core/IconButton';
+import UsuarioAPI from '../../resources/api/usuario';
+import ExceptionEnum from '../../resources/exception-enum';
+import Swal from '../../components/swal/swal';
+import Loading from '../../components/loading/loading';
+import Authentication from '../../resources';
 
 /**
  * Uma linha flexivel
@@ -48,6 +53,7 @@ function Login(props: LoginPropTypes): JSX.Element {
   const history = useHistory();
 
   const [passwordVisible, setPasswordVisible] = useState(false);
+  const [isLoading, setLoading] = useState<boolean>(false);
 
   const { values, errors, touched, handleBlur, handleSubmit, handleChange } = useFormik<
     LoginFormikValuesType
@@ -73,6 +79,8 @@ function Login(props: LoginPropTypes): JSX.Element {
 
   return (
     <BaseLogin>
+      <Loading show={isLoading} />
+
       <Row>
         <TextField
           label='E-mail'
@@ -145,7 +153,40 @@ function Login(props: LoginPropTypes): JSX.Element {
     values: LoginFormikValuesType,
     formikHelpers: FormikHelpers<LoginFormikValuesType>
   ) {
-    history.push('/');
+    setLoading(true);
+
+    const usuarioAPI = new UsuarioAPI();
+
+    usuarioAPI
+      .login(values)
+      .then(() => {
+        Authentication.setToken(values);
+        history.push('/');
+      })
+      .catch((err) => {
+        setLoading(false);
+
+        if (err.response?.data.codigo === ExceptionEnum.USUARIO_INEXISTENTE) {
+          Swal({
+            showConfirmButton: false,
+            showCancelButton: true,
+            cancelButtonText: 'Ok',
+            title: 'Falha na autenticação',
+            text: 'E-mail ou senha incorretos, tente novamente',
+            icon: 'error',
+          });
+          return;
+        }
+
+        Swal({
+          showConfirmButton: false,
+          showCancelButton: true,
+          cancelButtonText: 'Ok',
+          title: 'Falha na autenticação',
+          text: 'Ocorreu um erro desconhecido, tente novamente',
+          icon: 'error',
+        });
+      });
   }
 }
 

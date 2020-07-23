@@ -19,8 +19,12 @@ import IconButton from '@material-ui/core/IconButton';
 import Avatar from '@material-ui/core/Avatar';
 import Tooltip from '@material-ui/core/Tooltip';
 import { fileToBase64 } from '../../utils';
-import Loading from '../../components/loading/loading';
+import LoadingSwal from '../../components/swal/loading-swal';
 import Swal from '../../components/swal/swal';
+import UsuarioAPI from '../../resources/api/usuario';
+import Usuario from '../../models/usuario';
+import Authentication from '../../resources';
+import ExceptionEnum from '../../resources/exception-enum';
 
 /**
  * Tipo dos valores do formik
@@ -33,7 +37,7 @@ export type CadastroUsuarioFormikValuesType = {
   dsEmail: string;
   dsSenha: string;
   dsConfirmarSenha: string;
-  dsBase64Foto: string | null;
+  dsBase64Foto: string | undefined;
 };
 
 export type CadastroUsuarioPropTypes = {};
@@ -65,7 +69,7 @@ function CadastroUsuario(props: CadastroUsuarioPropTypes): JSX.Element {
       dsEmail: '',
       dsSenha: '',
       dsConfirmarSenha: '',
-      dsBase64Foto: null,
+      dsBase64Foto: undefined,
     },
     validationSchema: Yup.lazy<any>((values: CadastroUsuarioFormikValuesType) =>
       Yup.object().shape({
@@ -256,7 +260,7 @@ function CadastroUsuario(props: CadastroUsuarioPropTypes): JSX.Element {
         <Grid item xs className={classes.containerButtons}>
           {values.dsBase64Foto && (
             <Button
-              onClick={() => setFieldValue('dsBase64Foto', null)}
+              onClick={() => setFieldValue('dsBase64Foto', undefined)}
               variant='contained'
               className={classes.buttonRemoveImg}
               color='inherit'
@@ -286,12 +290,56 @@ function CadastroUsuario(props: CadastroUsuarioPropTypes): JSX.Element {
    * Manipula o evento de submit do Formik
    *
    * @param {CadastroUsuarioFormikValuesType} values - Valores do submit
-   * @param {FormikHelpers<CadastroUsuarioFormikValuesType>} formikHelpers - Auxiliares
    */
-  function handleSubmitFormik(
-    values: CadastroUsuarioFormikValuesType,
-    formikHelpers: FormikHelpers<CadastroUsuarioFormikValuesType>
-  ) {}
+  function handleSubmitFormik(values: CadastroUsuarioFormikValuesType) {
+    const { dtNascimento, dsBase64Foto, dsEmail, dsSenha } = values;
+    if (!dtNascimento) return;
+
+    LoadingSwal({ text: 'Carregando' });
+
+    const usuarioAPI = new UsuarioAPI();
+
+    const usuario: Usuario = {
+      ...values,
+      dtNascimento: dtNascimento.format('YYYY-MM-DD'),
+      dsBase64Foto,
+    };
+
+    usuarioAPI
+      .save(usuario)
+      .then(() => {
+        Swal({
+          showConfirmButton: true,
+          title: 'Sucesso',
+          text: 'Usuário criado com sucesso',
+          icon: 'success',
+        });
+        Authentication.setToken({ dsEmail, dsSenha });
+        history.push('/');
+      })
+      .catch((err) => {
+        if (err.response?.data.codigo === ExceptionEnum.EMAIL_DUPLICADO) {
+          Swal({
+            showConfirmButton: false,
+            showCancelButton: true,
+            cancelButtonText: 'Ok',
+            title: 'Falha no cadastro do usuário',
+            text: 'Este E-mail ja está cadastrado',
+            icon: 'error',
+          });
+          return;
+        }
+
+        Swal({
+          showConfirmButton: false,
+          showCancelButton: true,
+          cancelButtonText: 'Ok',
+          title: 'Ocorreu um erro',
+          text: 'Ocorreu um erro desconhecido, tente novamente',
+          icon: 'error',
+        });
+      });
+  }
 
   /**
    * Manipula o evento de seleção de um arquivo
