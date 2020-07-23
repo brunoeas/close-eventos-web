@@ -7,6 +7,7 @@ import ExitIcon from '@material-ui/icons/ExitToApp';
 import Grid from '@material-ui/core/Grid';
 import Tooltip from '@material-ui/core/Tooltip';
 import { useHistory } from 'react-router-dom';
+import Authentication from '../../resources';
 
 const logo = require('../../assets/images/logo.png');
 
@@ -38,7 +39,10 @@ function MainToolbar(props: MainToolbarPropTypes): JSX.Element {
             <Grid item xs={1} className={classes.containerExitButton}>
               <Tooltip title='Sair'>
                 <IconButton
-                  onClick={() => history.push('/login')}
+                  onClick={() => {
+                    Authentication.clear();
+                    history.push('/login');
+                  }}
                   color='secondary'
                   className={classes.iconButtonExit}
                 >

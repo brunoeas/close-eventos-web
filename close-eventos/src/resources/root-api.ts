@@ -1,5 +1,6 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 import URL from './URL';
+import Authentication from '.';
 
 /**
  * Modelo de configurações da instância do Axios
@@ -31,7 +32,9 @@ abstract class RootApi {
    */
   protected constructor(configs: RootApiConfigs = {}) {
     const baseURL = `${configs.baseURL ?? URL.MAIN_API}${configs.baseEndpoint ?? ''}`;
-    this.api = axios.create({ ...configs, baseURL });
+    const token = Authentication.getToken();
+
+    this.api = axios.create({ ...configs, baseURL, headers: { Authorization: token?.dsEmail } });
   }
 }
 
