@@ -14,7 +14,7 @@
     "@material-ui/pickers": "3.2.10",
     "@n8tb1t/use-scroll-position": "1.0.42",
     "downshift": "5.2.2",
-    "axios": "0.19.2",
+    "axios": "0.21.1",
     "formik": "2.1.4",
     "moment": "2.27.0",
     "react": "16.13.1",
